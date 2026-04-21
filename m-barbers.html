@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M Barbers — Ashton-in-Makerfield</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --oak-dark: #1a1008;
+    --oak-mid: #2a1a0a;
+    --oak-light: #3d2610;
+    --oak-warm: #4a2e12;
+    --gold: #c8922a;
+    --gold-light: #e0aa44;
+    --gold-pale: rgba(200,146,42,0.15);
+    --cream: #f2e8d5;
+    --cream-dim: #b5a48a;
+    --border: rgba(200,146,42,0.25);
+    --card: #221408;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--oak-dark);
+    color: var(--cream);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* Wood grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        92deg,
+        transparent,
+        transparent 2px,
+        rgba(200,146,42,0.015) 2px,
+        rgba(200,146,42,0.015) 3px
+      ),
+      repeating-linear-gradient(
+        88deg,
+        transparent,
+        transparent 8px,
+        rgba(0,0,0,0.04) 8px,
+        rgba(0,0,0,0.04) 9px
+      );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 4rem;
+    background: rgba(22,12,4,0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+  }
+
+  .logo span { color: var(--gold); }
+
+  nav ul { list-style: none; display: flex; gap: 2.5rem; align-items: center; }
+
+  nav ul a {
+    text-decoration: none;
+    color: var(--cream);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    transition: opacity 0.3s, color 0.3s;
+  }
+
+  nav ul a:hover { opacity: 1; color: var(--gold); }
+
+  .nav-book {
+    border: 1px solid var(--gold) !important;
+    color: var(--gold) !important;
+    opacity: 1 !important;
+    padding: 0.5rem 1.4rem;
+    transition: background 0.3s, color 0.3s !important;
+  }
+
+  .nav-book:hover { background: var(--gold) !important; color: var(--oak-dark) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 9rem 4rem 6rem;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(200,146,42,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(74,46,18,0.6) 0%, transparent 50%),
+      linear-gradient(135deg, #1a1008 0%, #2a1a0a 40%, #1e1206 100%);
+  }
+
+  /* Diagonal wood grain lines */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        105deg,
+        transparent,
+        transparent 60px,
+        rgba(200,146,42,0.025) 60px,
+        rgba(200,146,42,0.025) 61px
+      );
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 650px; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid var(--border);
+    padding: 0.5rem 1.2rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.1s;
+  }
+
+  .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 9vw, 8.5rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+
+  .hero h1 .outline-text {
+    -webkit-text-stroke: 1px var(--gold);
+    color: transparent;
+  }
+
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.5s;
+  }
+
+  .hero-sub {
+    font-size: 0.82rem;
+    color: var(--cream-dim);
+    line-height: 1.9;
+    max-width: 400px;
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.7s;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.9s;
+  }
+
+  /* Large decorative M */
+  .hero-deco {
+    position: absolute;
+    right: -3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18rem, 30vw, 32rem);
+    font-weight: 700;
+    color: rgba(200,146,42,0.04);
+    line-height: 1;
+    user-select: none;
+    z-index: 1;
+  }
+
+  /* BUTTONS */
+  .btn-gold {
+    background: var(--gold);
+    color: var(--oak-dark);
+    padding: 1rem 2.2rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s, transform 0.2s;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--cream);
+    padding: 1rem 2.2rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.3s, color 0.3s;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* RATING BAND */
+  .rating-band {
+    background: var(--oak-light);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .rating-main {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .rating-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .rating-stars { color: var(--gold); font-size: 1rem; letter-spacing: 0.1em; }
+  .rating-count { font-size: 0.7rem; color: var(--cream-dim); letter-spacing: 0.1em; margin-top: 0.2rem; }
+
+  .band-divider { width: 1px; height: 45px; background: var(--border); }
+
+  .band-fact { font-size: 0.75rem; color: var(--cream-dim); letter-spacing: 0.05em; }
+  .band-fact strong { color: var(--cream); display: block; font-size: 0.95rem; font-weight: 500; margin-bottom: 0.2rem; }
+
+  /* SECTIONS */
+  .section { padding: 6rem 4rem; }
+  .section-oak { background: var(--oak-mid); }
+
+  .eyebrow {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+  .title-rule { width: 50px; height: 2px; background: var(--gold); margin-bottom: 3rem; }
+
+  /* REVIEWS */
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    padding: 2.5rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .review-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .review-stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.15em; margin-bottom: 1.2rem; }
+
+  .review-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.8;
+    color: rgba(242,232,213,0.85);
+    margin-bottom: 1.5rem;
+  }
+
+  .review-author { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+
+  /* SERVICES */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .svc {
+    background: var(--oak-dark);
+    padding: 2rem 2.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: background 0.25s;
+    position: relative;
+  }
+
+  .svc::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .svc:hover { background: var(--oak-mid); }
+  .svc:hover::before { opacity: 1; }
+
+  .svc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .svc-note { font-size: 0.68rem; color: var(--cream-dim); margin-top: 0.25rem; letter-spacing: 0.05em; }
+
+  .svc-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  /* VISIT */
+  .visit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    margin-top: 3rem;
+  }
+
+  .visit-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 3rem;
+  }
+
+  .visit-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--gold);
+  }
+
+  .visit-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.82rem;
+    color: var(--cream-dim);
+    line-height: 1.6;
+  }
+
+  .visit-item-icon { color: var(--gold); flex-shrink: 0; font-size: 1rem; }
+  .visit-item strong { color: var(--cream); }
+
+  .hours-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(200,146,42,0.1);
+    font-size: 0.82rem;
+  }
+
+  .hours-row:last-child { border-bottom: none; }
+  .hours-day { color: var(--cream-dim); letter-spacing: 0.05em; }
+  .hours-time { color: var(--cream); font-weight: 500; }
+  .hours-closed { color: var(--gold); opacity: 0.6; }
+
+  /* CTA */
+  .cta {
+    position: relative;
+    padding: 7rem 4rem;
+    text-align: center;
+    overflow: hidden;
+    background: var(--oak-warm);
+    border-top: 1px solid var(--border);
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(200,146,42,0.12) 0%, transparent 65%),
+      repeating-linear-gradient(105deg, transparent, transparent 60px, rgba(200,146,42,0.03) 60px, rgba(200,146,42,0.03) 61px);
+  }
+
+  .cta-deco {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(10rem, 20vw, 22rem);
+    font-weight: 700;
+    color: rgba(200,146,42,0.05);
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .cta-content { position: relative; z-index: 2; }
+
+  .cta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+  }
+
+  .cta h2 em { font-style: italic; color: var(--gold); }
+
+  .cta p { font-size: 0.82rem; color: rgba(242,232,213,0.7); letter-spacing: 0.08em; margin-bottom: 2.5rem; }
+
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* WHATSAPP */
+  .btn-whatsapp {
+    background: #25D366;
+    color: #fff;
+    padding: 1rem 2.2rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: background 0.3s, transform 0.2s;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .btn-whatsapp:hover { background: #1da851; transform: translateY(-2px); }
+  .btn-whatsapp svg { width: 16px; height: 16px; fill: #fff; }
+
+  .whatsapp-float {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    z-index: 600;
+    background: #25D366;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 24px rgba(37,211,102,0.35);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 32px rgba(37,211,102,0.5); }
+  .whatsapp-float svg { width: 28px; height: 28px; fill: #fff; }
+
+  /* FOOTER */
+  footer {
+    background: #0e0804;
+    padding: 2.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  footer p { font-size: 0.65rem; color: var(--cream-dim); letter-spacing: 0.1em; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    nav ul { display: none; }
+    .hero { padding: 8rem 1.5rem 4rem; }
+    .hero-deco { display: none; }
+    .section { padding: 4rem 1.5rem; }
+    .rating-band { padding: 1.5rem; }
+    .band-divider { display: none; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .visit-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .cta { padding: 5rem 1.5rem; }
+    .cta-btns { flex-direction: column; align-items: center; }
+    footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://wa.me/447491098735" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<nav>
+  <div class="logo">M <span>Barbers</span></div>
+  <ul>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#visit">Visit</a></li>
+    <li><a href="#visit" class="nav-book">Book Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-deco">M</div>
+  <div class="hero-content">
+    <div class="hero-badge">Ashton-in-Makerfield · Wigan</div>
+    <h1><span class="outline-text">Premium</span><br>Cuts.</h1>
+    <p class="hero-tagline">Crafted with precision.</p>
+    <p class="hero-sub">From classic cuts to straight razor shaves, M Barbers delivers a premium experience every time. Walk in and leave looking your best.</p>
+    <div class="hero-actions">
+      <a href="#visit" class="btn-gold">Book Your Visit</a>
+      <a href="#services" class="btn-ghost">Our Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- RATING BAND -->
+<div class="rating-band">
+  <div class="rating-main">
+    <div class="rating-score">4.8</div>
+    <div>
+      <div class="rating-stars">★★★★★</div>
+      <div class="rating-count">67 Google Reviews</div>
+    </div>
+  </div>
+  <div class="band-divider"></div>
+  <div class="band-fact"><strong>Walk-ins Welcome</strong>No appointment needed</div>
+  <div class="band-divider"></div>
+  <div class="band-fact"><strong>Full Service</strong>Cuts, fades, shaves & more</div>
+  <div class="band-divider"></div>
+  <div class="band-fact"><strong>Ashton-in-Makerfield</strong>Your local premium barber</div>
+</div>
+
+<!-- REVIEWS -->
+<section class="section" id="reviews">
+  <p class="eyebrow reveal">What People Say</p>
+  <h2 class="section-title reveal">Trusted by the <em>Community</em></h2>
+  <div class="title-rule reveal"></div>
+  <div class="reviews-grid reveal">
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Quality haircuts, great price and friendly service. Wouldn't go anywhere else — absolutely brilliant every time."</p>
+      <div class="review-author">— Google Review</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Great haircut and friendly service at M Barbers! Always leave feeling fresh and confident. Highly recommended."</p>
+      <div class="review-author">— Google Review</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Overall, brilliant staff, premises, customer service. The attention to detail is something else — a cut above the rest."</p>
+      <div class="review-author">— Google Review</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section section-oak" id="services">
+  <p class="eyebrow reveal">What We Offer</p>
+  <h2 class="section-title reveal">Our <em>Services</em></h2>
+  <div class="title-rule reveal"></div>
+  <div class="services-grid reveal">
+    <div class="svc"><div><div class="svc-name">Scissor Cut</div><div class="svc-note">Classic precision cut</div></div><div class="svc-price">From £12</div></div>
+    <div class="svc"><div><div class="svc-name">Buzz Cut</div><div class="svc-note">Clean & sharp</div></div><div class="svc-price">From £10</div></div>
+    <div class="svc"><div><div class="svc-name">Long Haircut</div><div class="svc-note">Wash, cut & style</div></div><div class="svc-price">From £18</div></div>
+    <div class="svc"><div><div class="svc-name">Hair Shape-Up</div><div class="svc-note">Line up & edge work</div></div><div class="svc-price">From £8</div></div>
+    <div class="svc"><div><div class="svc-name">Straight Razor Shave</div><div class="svc-note">Traditional hot towel</div></div><div class="svc-price">From £15</div></div>
+    <div class="svc"><div><div class="svc-name">Head Shave</div><div class="svc-note">Smooth finish</div></div><div class="svc-price">From £12</div></div>
+    <div class="svc"><div><div class="svc-name">Beard Conditioning</div><div class="svc-note">Trim, shape & condition</div></div><div class="svc-price">From £10</div></div>
+    <div class="svc"><div><div class="svc-name">Hair Colouring</div><div class="svc-note">Full colour service</div></div><div class="svc-price">POA</div></div>
+    <div class="svc"><div><div class="svc-name">Waxing</div><div class="svc-note">Professional wax</div></div><div class="svc-price">POA</div></div>
+    <div class="svc"><div><div class="svc-name">Shave</div><div class="svc-note">Clean wet shave</div></div><div class="svc-price">From £10</div></div>
+  </div>
+  <p style="margin-top:1rem;font-size:0.7rem;color:var(--cream-dim);letter-spacing:0.05em;">* Prices are a guide — visit us for exact pricing.</p>
+</section>
+
+<!-- VISIT -->
+<section class="section" id="visit">
+  <p class="eyebrow reveal">Find Us</p>
+  <h2 class="section-title reveal">Come & See <em>Us</em></h2>
+  <div class="title-rule reveal"></div>
+  <div class="visit-grid reveal">
+    <div class="visit-card">
+      <div class="visit-card-title">Location & Contact</div>
+      <div class="visit-item">
+        <div class="visit-item-icon">📍</div>
+        <div><strong>6 Rectory Road</strong><br>Ashton-in-Makerfield<br>Wigan, WN4 0QD</div>
+      </div>
+      <div class="visit-item">
+        <div class="visit-item-icon">📱</div>
+        <div><strong>07491 098735</strong></div>
+      </div>
+      <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="https://wa.me/447491098735" target="_blank" class="btn-whatsapp">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp Us
+        </a>
+        <a href="https://maps.google.com/?q=6+Rectory+Rd,+Ashton-in-Makerfield,+Wigan+WN4+0QD" target="_blank" class="btn-ghost">Get Directions</a>
+      </div>
+    </div>
+    <div class="visit-card">
+      <div class="visit-card-title">Opening Hours</div>
+      <div class="hours-row"><span class="hours-day">Monday</span><span class="hours-time">9am – 6pm</span></div>
+      <div class="hours-row"><span class="hours-day">Tuesday</span><span class="hours-time">9am – 6pm</span></div>
+      <div class="hours-row"><span class="hours-day">Wednesday</span><span class="hours-time">9am – 6pm</span></div>
+      <div class="hours-row"><span class="hours-day">Thursday</span><span class="hours-time">9am – 6pm</span></div>
+      <div class="hours-row"><span class="hours-day">Friday</span><span class="hours-time">9am – 6pm</span></div>
+      <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">9am – 5pm</span></div>
+      <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-closed">Closed</span></div>
+      <p style="margin-top:1.5rem;font-size:0.7rem;color:var(--cream-dim);letter-spacing:0.05em;">* Hours are estimated — confirm directly with the shop.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-deco">M</div>
+  <div class="cta-content reveal">
+    <h2>Ready for Your<br><em>Best Cut Yet?</em></h2>
+    <p>Walk in or message us on WhatsApp — we'll get you sorted.</p>
+    <div class="cta-btns">
+      <a href="https://wa.me/447491098735" target="_blank" class="btn-gold">Message on WhatsApp</a>
+      <a href="https://maps.google.com/?q=6+Rectory+Rd,+Ashton-in-Makerfield,+Wigan+WN4+0QD" target="_blank" class="btn-ghost">Get Directions</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;letter-spacing:0.15em;">M <span style="color:var(--gold);">Barbers</span></div>
+  <p>6 Rectory Rd, Ashton-in-Makerfield, Wigan WN4 0QD</p>
+  <p>© 2025 M Barbers</p>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
